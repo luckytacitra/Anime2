@@ -38,7 +38,7 @@ if not os.path.exists("users-details-2023.csv"):
 
 @st.cache_data
 def load_data():
-    df_anime = pd.read_csv('anime-dataset-2023.csv')
+    df_anime = pd.read_csv('anime-dataset-2023-clean.csv')
     df_user = pd.read_csv('users-details-2023.csv')
     df_score = pd.read_csv('users-score-small.csv')
     return df_anime, df_user, df_score
