@@ -266,18 +266,44 @@ elif menu == "Recommendation System":
     anime_list = sorted(df_anime['Name'].dropna().unique())
 
     selected_anime = st.selectbox(
-        "Pilih Anime",
-        anime_list
-    )
-
+    "Pilih Anime",
+    ["-- Pilih Anime --"] + anime_list
+)
+    if selected_anime != "-- Pilih Anime --":
+    
     st.write("Anime yang dipilih:")
     st.success(selected_anime)
 
-    recommendations = df_anime[
-        df_anime['Genres'] == df_anime[
-            df_anime['Name'] == selected_anime
-        ]['Genres'].values[0]
-    ][['Name', 'Genres', 'Score']].head(10)
+ # DETAIL ANIME
+    anime_info = df_anime[
+        df_anime['Name'] == selected_anime
+    ]
+
+    st.write("### Detail Anime")
+
+    st.dataframe(
+        anime_info[
+            ['Name', 'Genres', 'Score', 'Type']
+        ]
+    )
+
+selected_genre = anime_info[
+        'Genres'
+    ].values[0]
+
+recommendations = df_anime[
+    (df_anime['Genres'] == selected_genre) &
+    (df_anime['Genres'] != 'UNKNOWN')
+]
+
+recommendations = recommendations.sort_values(
+    by='Score',
+    ascending=False
+)
+
+recommendations = recommendations[
+    ['Name', 'Genres', 'Score']
+].head(10)
 
     st.write("## Rekomendasi Anime")
     st.dataframe(recommendations)
