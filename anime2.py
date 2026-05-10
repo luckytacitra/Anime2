@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -263,47 +262,64 @@ elif menu == "Recommendation System":
 
     st.subheader("Anime Recommendation")
 
-    anime_list = sorted(df_anime['Name'].dropna().unique())
+    # FILTER ANIME VALID
+    anime_list = sorted(
 
-    selected_anime = st.selectbox(
-    "Pilih Anime",
-    ["-- Pilih Anime --"] + anime_list
-)
-    if selected_anime != "-- Pilih Anime --":
-    
-    st.write("Anime yang dipilih:")
-    st.success(selected_anime)
+        df_anime[
+            (df_anime['Genres'] != 'UNKNOWN') &
+            (df_anime['Score'] != 'UNKNOWN')
+        ]['Name']
 
- # DETAIL ANIME
-    anime_info = df_anime[
-        df_anime['Name'] == selected_anime
-    ]
+        .dropna()
 
-    st.write("### Detail Anime")
-
-    st.dataframe(
-        anime_info[
-            ['Name', 'Genres', 'Score', 'Type']
-        ]
+        .unique()
     )
 
-selected_genre = anime_info[
-        'Genres'
-    ].values[0]
+    # DROPDOWN
+    selected_anime = st.selectbox(
+        "Pilih Anime",
+        ["-- Pilih Anime --"] + anime_list
+    )
 
-recommendations = df_anime[
-    (df_anime['Genres'] == selected_genre) &
-    (df_anime['Genres'] != 'UNKNOWN')
-]
+    # JIKA SUDAH PILIH
+    if selected_anime != "-- Pilih Anime --":
 
-recommendations = recommendations.sort_values(
-    by='Score',
-    ascending=False
-)
+        st.write("Anime yang dipilih:")
+        st.success(selected_anime)
 
-recommendations = recommendations[
-    ['Name', 'Genres', 'Score']
-].head(10)
+        # DETAIL ANIME
+        anime_info = df_anime[
+            df_anime['Name'] == selected_anime
+        ]
 
-    st.write("## Rekomendasi Anime")
-    st.dataframe(recommendations)
+        st.write("### Detail Anime")
+
+        st.dataframe(
+            anime_info[
+                ['Name', 'Genres', 'Score', 'Type']
+            ]
+        )
+
+        # GENRE TERPILIH
+        selected_genre = anime_info[
+            'Genres'
+        ].values[0]
+
+        # RECOMMENDATION
+        recommendations = df_anime[
+            (df_anime['Genres'] == selected_genre) &
+            (df_anime['Genres'] != 'UNKNOWN')
+        ]
+
+        recommendations = recommendations.sort_values(
+            by='Score',
+            ascending=False
+        )
+
+        recommendations = recommendations[
+            ['Name', 'Genres', 'Score']
+        ].head(10)
+
+        st.write("## Rekomendasi Anime")
+
+        st.dataframe(recommendations)
